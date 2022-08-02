@@ -3,6 +3,7 @@ package tacos.model;
 import lombok.Data;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
+import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -12,41 +13,56 @@ import java.util.Date;
 import java.util.List;
 
 @Data
+@Entity
+@Table(name="Taco_Order")
 public class TacoOrder implements Serializable {
-    private static final long serialVersionUID = 1L;
 
-    private Long id;
+  private static final long serialVersionUID = 1L;
 
-    private Date placedAt;
+  @Id
+  @GeneratedValue(strategy=GenerationType.AUTO)
+  private Long id;
 
-    @NotBlank(message = "Delivery name is required")
-    private String deliveryName;
+  private Date placedAt;
 
-    @NotBlank(message = "Street is required")
-    private String deliveryStreet;
+  @ManyToOne
+  private User user;
 
-    @NotBlank(message = "City is required")
-    private String deliveryCity;
+  @NotBlank(message="Delivery name is required")
+  private String deliveryName;
 
-    @NotBlank(message = "State is required")
-    private String deliveryState;
+  @NotBlank(message="Street is required")
+  private String deliveryStreet;
 
-    @NotBlank(message = "Zip code is required")
-    private String deliveryZip;
+  @NotBlank(message="City is required")
+  private String deliveryCity;
 
-    @CreditCardNumber(message = "Not a valid credit card number")
-    private String ccNumber;
+  @NotBlank(message="State is required")
+  private String deliveryState;
 
-    @Pattern(regexp = "^(0[1-9]|1[0-2])(\\/)([2-9][0-9])$",
-            message = "Must be formatted MM/YY")
-    private String ccExpiration;
+  @NotBlank(message="Zip code is required")
+  private String deliveryZip;
 
-    @Digits(integer = 3, fraction = 0, message = "Invalid CVV")
-    private String ccCVV;
+  @CreditCardNumber(message="Not a valid credit card number")
+  private String ccNumber;
 
-    private List<Taco> tacos = new ArrayList<>();
+  @Pattern(regexp="^(0[1-9]|1[0-2])([\\/])([2-9][0-9])$",
+           message="Must be formatted MM/YY")
+  private String ccExpiration;
 
-    public void addTaco(Taco taco) {
-        this.tacos.add(taco);
-    }
+  @Digits(integer=3, fraction=0, message="Invalid CVV")
+  private String ccCVV;
+
+  @ManyToMany(targetEntity=Taco.class)
+  private List<Taco> tacos = new ArrayList<>();
+
+  public void addTaco(Taco design) {
+    this.tacos.add(design);
+  }
+
+  @PrePersist
+  void placedAt() {
+    this.placedAt = new Date();
+  }
+
 }
