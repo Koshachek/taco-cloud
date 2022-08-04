@@ -2,6 +2,8 @@ package tacos.web;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tacos.data.TacoRepository;
 import tacos.model.Taco;
@@ -25,7 +27,11 @@ public class TacoController {
   }
 
   @GetMapping("/{id}")
-  public Optional<Taco> tacoById(@PathVariable("id") Long id) {
-    return tacoRepo.findById(id);
+  public ResponseEntity<Taco> tacoById(@PathVariable("id") Long id) {
+    Optional<Taco> optTaco = tacoRepo.findById(id);
+    if (optTaco.isPresent()) {
+      return new ResponseEntity<>(optTaco.get(), HttpStatus.OK);
+    }
+    return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
   }
 }
