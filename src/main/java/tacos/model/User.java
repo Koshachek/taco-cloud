@@ -15,7 +15,7 @@ import javax.persistence.Id;
 import java.util.Arrays;
 import java.util.Collection;
 
-@Entity
+@Entity(name="TACO_USER")
 @Data
 @NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
 @RequiredArgsConstructor
